@@ -27,9 +27,8 @@
 
 #pragma once
 
-#include <cassert>
-#include <cstdint>
-#include <iostream>
+#include <assert.h>
+#include <stdint.h>
 
 //Both tLittleEndian and tBigEndian are manufactured primitives
 //that are essentially immutable except for the assignment operators.
@@ -48,28 +47,29 @@ protected:
     static T Swap(const T& b)
     {
         T n;
+        uint8_t* pn = reinterpret_cast<uint8_t*>(&n);
 
         switch(sizeof(T))
         {
             case 8: //64-bit
-                ((uint8_t*)&n)[0] = ((uint8_t*)&b)[7];
-                ((uint8_t*)&n)[1] = ((uint8_t*)&b)[6];
-                ((uint8_t*)&n)[2] = ((uint8_t*)&b)[5];
-                ((uint8_t*)&n)[3] = ((uint8_t*)&b)[4];
-                ((uint8_t*)&n)[4] = ((uint8_t*)&b)[3];
-                ((uint8_t*)&n)[5] = ((uint8_t*)&b)[2];
-                ((uint8_t*)&n)[6] = ((uint8_t*)&b)[1];
-                ((uint8_t*)&n)[7] = ((uint8_t*)&b)[0];
+                pn[0] = ((uint8_t*)&b)[7];
+                pn[1] = ((uint8_t*)&b)[6];
+                pn[2] = ((uint8_t*)&b)[5];
+                pn[3] = ((uint8_t*)&b)[4];
+                pn[4] = ((uint8_t*)&b)[3];
+                pn[5] = ((uint8_t*)&b)[2];
+                pn[6] = ((uint8_t*)&b)[1];
+                pn[7] = ((uint8_t*)&b)[0];
                 break;
             case 4: //32-bit
-                ((uint8_t*)&n)[0] = ((uint8_t*)&b)[3];
-                ((uint8_t*)&n)[1] = ((uint8_t*)&b)[2];
-                ((uint8_t*)&n)[2] = ((uint8_t*)&b)[1];
-                ((uint8_t*)&n)[3] = ((uint8_t*)&b)[0];
+                pn[0] = ((uint8_t*)&b)[3];
+                pn[1] = ((uint8_t*)&b)[2];
+                pn[2] = ((uint8_t*)&b)[1];
+                pn[3] = ((uint8_t*)&b)[0];
                 break;
             case 2: //16-bit
-                ((uint8_t*)&n)[0] = ((uint8_t*)&b)[1];
-                ((uint8_t*)&n)[1] = ((uint8_t*)&b)[0];
+                pn[0] = ((uint8_t*)&b)[1];
+                pn[1] = ((uint8_t*)&b)[0];
                 break;
             default:
                 assert(0);  //Endian swap is only defined for 2, 4, and 8-byte types
@@ -131,8 +131,6 @@ public:
     tLittleEndian& operator ^=(const T& b)  { *this = T(*this) ^ b; return *this; }
     tLittleEndian& operator <<=(const T& b) { *this = T(T(*this) << b); return *this; }
     tLittleEndian& operator >>=(const T& b) { *this = T(T(*this) >> b); return *this; }
-    friend std::ostream& operator <<(std::ostream &out, const tLittleEndian b) { out << T(b); return out; }
-    friend std::istream& operator >>(std::istream &in, tLittleEndian &b)       { T val; in >> val; b = val; return in; }
 };
 
 template<typename T>
@@ -184,8 +182,6 @@ public:
     tBigEndian& operator ^=(const T& b)  { *this = T(*this) ^ b; return *this; }
     tBigEndian& operator <<=(const T& b) { *this = T(T(*this) << b); return *this; }
     tBigEndian& operator >>=(const T& b) { *this = T(T(*this) >> b); return *this; }
-    friend std::ostream& operator <<(std::ostream &out, const tBigEndian b) { out << T(b); return out; }
-    friend std::istream& operator >>(std::istream &in, tBigEndian &b)       { T val; in >> val; b = val;    return in; }
 };
 
 typedef tLittleEndian<int16_t>      leint16;
