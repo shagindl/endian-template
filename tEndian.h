@@ -164,12 +164,15 @@ public:
     
     template <typename U> bool operator ==(U const& o) { return U(*this) == o; }
     template <typename U> bool operator !=(U const& o) { return U(*this) != o; }
+    template <typename U> bool operator <(U const& o) { return U(*this) < o; }
+    template <typename U> bool operator >(U const& o) { return U(*this) > o; }
 
     //Arithmetic assignment operators
     tBigEndian& operator ++()   /* prefix */ {                      *this = T(*this) + 1; return *this; }
     tBigEndian operator ++(int) /* suffix */ { tBigEndian t(*this); *this = T(*this) + 1; return t; }
     tBigEndian& operator --()   /* prefix */ {                      *this = T(*this) - 1; return *this; }
     tBigEndian operator --(int) /* suffix */ { tBigEndian t(*this); *this = T(*this) - 1; return t; }
+    template<typename U> U operator*(U R){ return T(*this) * R; }
     
     //Compound assignment operators
     tBigEndian& operator +=(const T& b)  { *this = T(*this) + b; return *this; }
@@ -182,6 +185,7 @@ public:
     tBigEndian& operator ^=(const T& b)  { *this = T(*this) ^ b; return *this; }
     tBigEndian& operator <<=(const T& b) { *this = T(T(*this) << b); return *this; }
     tBigEndian& operator >>=(const T& b) { *this = T(T(*this) >> b); return *this; }
+    
 };
 
 typedef tLittleEndian<int16_t>      leint16;
@@ -205,3 +209,7 @@ typedef tBigEndian<uint64_t>        beuint64;
 
 typedef tBigEndian<float>           befloat32;
 typedef tBigEndian<double>          befloat64;
+
+template<typename T> bool operator<(T L, const beuint16& R) {
+	return T(R) < L;
+}
