@@ -211,5 +211,5 @@ typedef tBigEndian<float>           befloat32;
 typedef tBigEndian<double>          befloat64;
 
 template<typename T> bool operator<(T L, const beuint16& R) {
-	return T(R) < L;
+	return L < T(R);
 }
